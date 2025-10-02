@@ -90,6 +90,56 @@ class Program
 
         Employee e = new Employee("Abi", 20022);
         e.Greet();
+        // ====== Polymorephism========
+        Console.WriteLine("====== Polymorephism========");
+        List<Shape> shapes = new List<Shape>
+        {
+            new Circle {Color = "Red", Radius = 5},
+            new Rectangle {Color = "Blue", Width = 4, Height = 6}
+        };
+
+        Console.WriteLine("Drawing all shapes.");
+        double totalArea = 0;
+        foreach (Shape shape in shapes)
+        {
+            shape.Draw();
+            totalArea += shape.CalculateArea();
+        }
+        Console.WriteLine($"Total area: {totalArea:F2}");
+        // ===== Abstract Class ===========
+        Console.WriteLine(" ===== Abstract Class ===========");
+        List<Ani> shelter = new List<Ani> { new Tiger("DANGER"), new Wolf("Wwwww") };
+        foreach (Ani pet in shelter)
+        {
+            pet.Eat();
+            pet.Sleep();
+        }
+
+        // ===== Sealed Class ===========
+        Console.WriteLine(" ===== Sealed Class ===========");
+        PetRock rock = new PetRock("Fred");
+        rock.Sleep();
+
+        // ========== interfacce =========
+        Console.WriteLine("========== interfacce =========");
+        List<IDrawable> drawables = new List<IDrawable>
+        {
+            new Cir { Radius = 5 },
+            new Button { Text = "Click Me" }
+        };
+
+        foreach (IDrawable item in drawables)
+        {
+            item.Draw();  // Polymorphism: Calls actual impl
+            Console.WriteLine(item.Description);
+        }
+
+
+
+
+
+
+
 
     }
 
