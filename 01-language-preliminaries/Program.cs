@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Net;
+using System.Text;
 using LearningUtsav;
 
 class Program
@@ -133,14 +135,71 @@ class Program
             item.Draw();  // Polymorphism: Calls actual impl
             Console.WriteLine(item.Description);
         }
+        //  ============ Delegate =============
+        SampleDelegate SampleObject1 = new SampleDelegate();
 
+        SampleDelegate.Addnum del_obj1 = new SampleDelegate.Addnum(SampleObject1.sum);
+        SampleDelegate.Subnum del_obj2 = new SampleDelegate.Subnum(SampleObject1.subtract);
 
+        del_obj1(100, 40);
+        del_obj2(100, 60);
 
+        // ================ EVENT =============
+        Console.WriteLine("================= EVENT =============");
+        Publisher pub = new Publisher();
+        Logger logger = new Logger();
+        Emailer emailer = new Emailer();
+        pub.OnAlert -= logger.Log;
+        pub.OnAlert += emailer.SendEmail;
+        pub.RaiseAlert("Student enrolled!");
 
+        // ============= Collection ===================
+        Console.WriteLine("============= Collection ===================");
+        // Sample as the array for storing
+        ArrayList al = new ArrayList();
+        Console.WriteLine("Adding some numbers: ");
+        al.Add(23);
+        al.Add(24);
+        al.Add(45);
+        al.Add(35);
 
+        Console.WriteLine("Capacity: {0}", al.Capacity);
+        Console.WriteLine("Count: {0}", al.Count);
+        foreach (int i in al)
+        {
+            Console.WriteLine(i + "");
+        }
+        Console.WriteLine();
+        Hashtable ht = new Hashtable();
+        ht.Add("ora", "Oracle");
+        ht.Add("ncc", "Net Centric");
+        ht.Add("rm", "Research Methodology");
+        foreach (DictionaryEntry d in ht)
+        {
+            Console.WriteLine(d.Key + " " + d.Value);
+        }
 
+        // =========== Generics ==============
+        Console.WriteLine("=========== Generics ==============");
+        List<int> lst = new List<int>();
+        lst.Add(1);
+        lst.Add(2);
+        lst.Add(22);
+        List<string> lst2 = new List<string>();
+        lst2.Add("Abi");
+        lst2.Add("Abinash");
+        lst2.Add("Bhati");
+        Console.WriteLine("List 1 with integer: ");
+        foreach (var i in lst)
+        {
+            Console.WriteLine(i);
+        }
 
-
+        Console.WriteLine("List 2 with String: ");
+        foreach (var n in lst2)
+        {
+            Console.WriteLine(n);
+        }
     }
 
 }
