@@ -2,9 +2,15 @@
 using System.Net;
 using System.Text;
 using LearningUtsav;
+using System.Reflection;
+
+
+
 
 class Program
 {
+
+
     static void Main()
     {
         // // For Method Overloading
@@ -200,6 +206,42 @@ class Program
         {
             Console.WriteLine(n);
         }
+        // ============= Files I/O ======================
+        // Console.WriteLine("============= Files I/O ======================");
+        // FileStream F = new FileStream("File.txt", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        // for (int i = 1; i <= 20; i++)
+        // {
+        //     F.WriteByte((byte)i);
+        // }
+        // F.Position = 0;
+        // for (int i = 0; i <= 20; i++)
+        // {
+        //     Console.WriteLine(F.ReadByte() + " ");
+        // }
+        // F.Close();
+        // Console.ReadKey();
+
+        // ======== Try Statements and Exceptions =======
+        Console.WriteLine("======== Try Statements and Exceptions ===== ");
+        int x = 0;
+        int div = 0;
+        try
+        {
+            div = 100 / x;
+            Console.WriteLine("This line is not executed");
+        }
+        catch (DivideByZeroException)
+        {
+            Console.WriteLine("Exwcution Occured");
+        }
+        // ================= ATTRIBUTES ==============
+        Console.WriteLine(" ================= ATTRIBUTES ==============");
+        MethodInfo addMethod = typeof(Calculator).GetMethod("Add");
+        HelpAttribute helpAttr = addMethod.GetCustomAttribute<HelpAttribute>();
+        Console.WriteLine($"Help for Add: {helpAttr?.HelpText}");
+        MethodInfo multiplyMethod = typeof(Calculator).GetMethod("Multiply");
+        HelpAttribute multHelp = multiplyMethod.GetCustomAttribute<HelpAttribute>();
+        Console.WriteLine($"Help for Multiply: {multHelp?.HelpText}, Topic: {multHelp?.Topic}");
     }
 
 }
