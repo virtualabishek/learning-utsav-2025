@@ -1,11 +1,13 @@
+// partial class can be split across files
 public partial class Game
 {
-    private List<Player> _players;
+    private List<Player> _players; // backing for indexer
+    // indexer: allows game[0] for player access
     public Player this[int index]
     {
         get => _players[index];
     }
-
+    // constructor : initializes with players
     public Game(List<Player> players)
     {
         _players = players;
