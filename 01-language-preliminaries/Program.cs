@@ -94,7 +94,7 @@ class Program
         Console.WriteLine("First value: " + o[0]);
         Console.WriteLine("Second value: " + o[1]);
         Console.WriteLine("Third value: " + o[2]);
-        // ======== Inheritence with base ===========
+    // ======== Inheritence with base ===========
 
         Employee e = new Employee("Abi", 20022);
         e.Greet();

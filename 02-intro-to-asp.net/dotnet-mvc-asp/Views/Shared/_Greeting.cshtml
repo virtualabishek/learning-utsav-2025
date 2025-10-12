@@ -1,0 +1,15 @@
+@* Views/Shared/_Greeting.cshtml *@
+<div class="alert alert-info text-center">
+    <strong>Haha</strong> Welcome to your MVC app 
+    <p>@DateTime.Now.ToString()</p>
+    @{
+        var helloWorld = "<b> Hello, World </b>";
+    }
+    <p>@helloWorld</p>
+    <p>@Html.Raw(helloWorld)</p>
+
+
+    @if(DateTime.Now.Year == 2025) {
+        <span>This is 2025 wow!</span>
+    }
+</div>
