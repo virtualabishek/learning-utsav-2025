@@ -1,0 +1,85 @@
+@model IEnumerable<TodoApp.Models.TodoItem>
+
+@{
+    ViewData["Title"] = "Todo Manager";
+}
+
+<h2>Todo Manager</h2>
+
+<p><strong>Session User ID:</strong> @ViewBag.UserId </p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<p><strong>Your IP:</strong> @ViewBag.UserIP | <strong>Requests this session:</strong> @ViewBag.RequestCount</p>
+
+@if (ViewBag.TotalTodos != null)
+{
+    <p><strong>Cached Total Todos:</strong> @ViewBag.TotalTodos (Refreshes every 5 min)</p>
+}
+
+<form asp-action="ToggleTheme" method="post" style="display: inline; margin-bottom: 10px;">
+    <button type="submit" class="btn btn-outline-secondary">
+        Toggle Theme (@(Context.Request.Cookies["Theme"] ?? "light"))
+    </button>
+</form>
+
+<a asp-action="Create" asp-route-prefillTitle="Quick Todo" class="btn btn-info">Quick Create</a>
+
+
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New Task</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No todos found. Create your first todo above!</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Completed</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@(item.Description ?? "No description")</td>
+                    <td>
+                        <span class="badge @(item.IsCompleted ? "bg-success" : "bg-secondary")">
+                            @(item.IsCompleted ? "Completed" : "Pending")
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const theme = document.cookie.split('; ').find(row => row.startsWith('Theme='))?.split('=')[1] || 'light';
+        document.body.classList.add(theme);
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
