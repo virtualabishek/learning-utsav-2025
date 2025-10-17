@@ -1,0 +1,7 @@
+/* App-specific styles. Tailwind utilities come from `src/index.css` imported in `main.jsx`. */
+
+.container {
+  max-width: 900px;
+}
+
+/* You can add custom component styles here */
