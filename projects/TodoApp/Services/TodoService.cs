@@ -12,7 +12,7 @@ namespace TodoApp.Services
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         }
 
-        public List<TodoItem> GetTodosAdoNet()
+        public List<TodoItem> GetTodosAdoNet(string? userId = null)
         {
             var todos = new List<TodoItem>();
 
@@ -21,7 +21,16 @@ namespace TodoApp.Services
                 connection.Open();
 
                 var command = connection.CreateCommand();
-                command.CommandText = "SELECT Id, Title, Description, IsCompleted FROM Todos";
+                if (userId == null)
+                {
+                    command.CommandText = "SELECT Id, Title, Description, IsCompleted, UserId FROM Todos";
+                }
+                else
+                {
+                    command.CommandText = "SELECT Id, Title, Description, IsCompleted, UserId FROM Todos WHERE UserId = @UserId";
+                    command.Parameters.AddWithValue("@UserId", userId);
+                }
+
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -31,7 +40,8 @@ namespace TodoApp.Services
                             Id = reader.GetInt32(0),
                             Title = reader.GetString(1),
                             Description = reader.IsDBNull(2) ? null : reader.GetString(2),
-                            IsCompleted = reader.GetBoolean(3)
+                            IsCompleted = reader.GetBoolean(3),
+                            UserId = reader.GetString(4)
                         });
                     }
                 }
@@ -47,10 +57,44 @@ namespace TodoApp.Services
                 connection.Open();
 
                 var command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO Todos (Title, Description, IsCompleted) VALUES (@Title, @Description, @IsCompleted)"; // Changed 'Todo' to 'Todos'
+                command.CommandText = "INSERT INTO Todos (Title, Description, IsCompleted, UserId) VALUES (@Title, @Description, @IsCompleted, @UserId)";
                 command.Parameters.AddWithValue("@Title", todo.Title);
                 command.Parameters.AddWithValue("@Description", todo.Description ?? (object)DBNull.Value);
                 command.Parameters.AddWithValue("@IsCompleted", todo.IsCompleted);
+                command.Parameters.AddWithValue("@UserId", todo.UserId);
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void UpdateTodoAdoNet(TodoItem todo)
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                var command = connection.CreateCommand();
+                command.CommandText = "UPDATE Todos SET Title = @Title, Description = @Description, IsCompleted = @IsCompleted WHERE Id = @Id AND UserId = @UserId";
+                command.Parameters.AddWithValue("@Title", todo.Title);
+                command.Parameters.AddWithValue("@Description", todo.Description ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@IsCompleted", todo.IsCompleted);
+                command.Parameters.AddWithValue("@Id", todo.Id);
+                command.Parameters.AddWithValue("@UserId", todo.UserId);
+
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteTodoAdoNet(int id, string userId)
+        {
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                var command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM Todos WHERE Id = @Id AND UserId = @UserId";
+                command.Parameters.AddWithValue("@Id", id);
+                command.Parameters.AddWithValue("@UserId", userId);
 
                 command.ExecuteNonQuery();
             }

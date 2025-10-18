@@ -6,8 +6,17 @@
 
 <h2>Todo Manager</h2>
 
-<p><strong>Session User ID:</strong> @ViewBag.UserId </p>
+<!-- User Info -->
+@if (User.Identity!.IsAuthenticated)
+{
+    <p><strong>Welcome, @User.Identity.Name!</strong> | <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Todo")">Logout</a></p>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Login</a> | <a asp-area="Identity" asp-page="/Account/Register">Register</a></p>
+}
 
+<!-- TempData Success Message -->
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -16,25 +25,39 @@
     </div>
 }
 
+<!-- HttpContext: IP and Request Count -->
 <p><strong>Your IP:</strong> @ViewBag.UserIP | <strong>Requests this session:</strong> @ViewBag.RequestCount</p>
 
+<!-- Cache: Total Todos -->
 @if (ViewBag.TotalTodos != null)
 {
-    <p><strong>Cached Total Todos:</strong> @ViewBag.TotalTodos (Refreshes every 5 min)</p>
+    <p><strong>Your Todos (Cached):</strong> @ViewBag.TotalTodos (Refreshes every 5 min)</p>
 }
 
+<!-- Cookies: Theme Toggle -->
 <form asp-action="ToggleTheme" method="post" style="display: inline; margin-bottom: 10px;">
+    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
     <button type="submit" class="btn btn-outline-secondary">
         Toggle Theme (@(Context.Request.Cookies["Theme"] ?? "light"))
     </button>
 </form>
 
-<a asp-action="Create" asp-route-prefillTitle="Quick Todo" class="btn btn-info">Quick Create</a>
+<!-- Admin Link -->
+@if (User.IsInRole("Admin"))
+{
+    <p><a asp-action="All" class="btn btn-warning">View All Users' Todos (Admin)</a></p>
+}
 
-
+<!-- Query Strings: Filter Todos -->
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-secondary @(ViewBag.Filter == null || ViewBag.Filter == "all" ? "btn-primary" : "")">All</a>
+    <a asp-action="Index" asp-route-filter="pending" class="btn btn-secondary @(ViewBag.Filter == "pending" ? "btn-primary" : "")">Pending</a>
+    <a asp-action="Index" asp-route-filter="completed" class="btn btn-secondary @(ViewBag.Filter == "completed" ? "btn-primary" : "")">Completed</a>
+</div>
 
 <p>
     <a asp-action="Create" class="btn btn-success">Create New Task</a>
+    <a asp-action="Create" asp-route-prefillTitle="Quick Todo" class="btn btn-info">Quick Create</a>
 </p>
 
 @if (!Model.Any())
@@ -73,13 +96,12 @@ else
     </table>
 }
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const theme = document.cookie.split('; ').find(row => row.startsWith('Theme='))?.split('=')[1] || 'light';
-        document.body.classList.add(theme);
-    });
-</script>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const theme = document.cookie.split('; ').find(row => row.startsWith('Theme='))?.split('=')[1] || 'light';
+            document.body.classList.add(theme);
+        });
+    </script>
 }

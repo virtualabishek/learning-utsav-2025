@@ -1,0 +1,53 @@
+Notes:
+
+Securing in ASP.NET Core Application
+
+Authentication: ASP.NET Core Identity, Adding authentication to apps and identity service
+configurations, Authorization: Roles, Claims and Policies, Securing Controllers and Action Methods,
+Common Vulnerabilities: Cross-site Scripting attacks, SQL Injection attacks, Cross-site Request Forgery
+(CSRF), Open Redirect Attacks
+
+
+
+------
+
+a) Authentication: The process of determining who made the request.
+
+b) Authorization: The process of determining whether the requested action is allowed or not.
+
+----
+
+ASP.NET Core Identity
+
+It adds UI login functionality to ASP.NET core web apps and manage users, passwords, profile data, roles, claims, tokens and so on.
+
+Adding Authentication to apps and identity service.
+done in project.
+
+---
+
+ Authorization: Roles, Claims and Policies, Securing Controllers and Action Methods
+
+Roles: just a role on the basis of user, like admin can have all access, but for sales just a limited one.
+
+CLaims and policy: when an identity is created it may be assigned one or more claims issued by a trusted party. A claim is just a name vlaue pair that represents what the subject is not what a subject can do.
+
+
+
+---
+
+Common Vulnerabilities
+
+a. Cross -site scripting attacks: XSS is security vulnerabilities which enables an attacker to place client side scripts into web pages just attached it to the client one, and when client run hacker this all cookies and session will go to the hacker.
+
+b. SQL injection attacks: SQLI just a malicious SQL code for backend db manipulation to access information that was not intended to display.
+
+c. Cross-site request Forgery (CSRF)
+
+CSRF is a type of web attack that uses a users own browser to post a form from one site and send some types authentication to others. (like a npm package hacked.)
+
+
+
+d. Open Redirect Attacks:
+
+It is a web application or server that uses a user -submitted link to redirect the user to a given website or page. The redirection typically includes a returnURL.
