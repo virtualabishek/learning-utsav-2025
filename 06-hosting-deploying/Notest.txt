@@ -1,0 +1,61 @@
+App Servers and Hosting models: IIS, Nginx, Apache, ASP.NET Core Module, Kestrel, Docker and
+Containerization, Publish toAzure cloud
+
+Hosting -> Process of deploying and installing applications into the server is called, "Hosting".
+
+Web server is just a process for hosting web applications.
+
+Types:
+
+1. IIS web server:It comes from MS stable and runs only on the Ms Windows OS>
+Advantages: 
+- Has support of MS
+- We can have access to the .NET Framework along with the ASPX scripts
+
+
+2. Apache Web Server:
+It is open source web server which was developed and maintained by 
+Apache Software. It is flexible. (no licening fee) It has a high level
+security.
+
+3. NGIX :
+It is a robust web server which was developed by Russain developer.
+It is free open soruce HTTP Server which can be used as a mail proxy,
+reverse proxy sever when required.
+
+Hosting Models in APS.NET Core:
+
+a. One of process hosting model: Can use kestral server directly as 
+a user request facing server or we can deploy the app into IIS.
+
+    i. Kestrel: It is cross-platform server for ASP.net Core. This is 
+    web server that included by default in ASP.NET Core project templates
+
+    ii. Using a proxy server: Due to limitation we cant use all the apps. 
+    in such cases, we have to use IIS, NGIX or apache.
+
+b. In process Hosting Model: In this type only one server is used for
+hosting like IIS, Nginx or Linux.
+
+
+ASP.NET Core Modules
+
+The ASP.NET Core module is a native IIS module that plugs into the IIS pipeline to
+either:
+-> host an ASP.NET Core app inside of the IIS worker process called the in-
+Process hosting Model
+-> forward web request to a backend ASP.NET Core app running the kesteral server
+
+
+DOcker & Container.
+
+Dockter is the platform for deploying and building the applications which delivers the applications in the packages over the OS livel virtualization, Docker required image and 
+Container to run the applications.
+
+
+Docker Image is the set of configuration and instructions to create 
+docker Container, an image is created during building applications based on
+steps defined in the docker file of our app.
+
+Conatiner is independent isolated process of an operating system that has its own
+networking and file system to run image or app.
