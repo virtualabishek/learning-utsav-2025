@@ -1,0 +1,53 @@
+@model Dictionary<int, int>
+@{
+    ViewData["Title"] = $"Tricks - Round {ViewBag.Round}";
+    var bids = ViewBag.Bids as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var session = ViewBag.Session as GameSession;
+    var prefill = Model ?? new Dictionary<int, int>();
+}
+<div class="container-fluid">
+    <h2>Tricks Won for Round @ViewBag.Round</h2>
+    @if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
+    @if (TempData["Warning"] != null) { <div class="alert alert-warning">@TempData["Warning"]</div> }
+    <form asp-action="Tricks" method="post">
+    <input type="hidden" name="round" value="@ViewBag.Round" />
+    <table class="table table-responsive table-striped"> 
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th class="text-end">Current Score</th>
+                <th>Bid</th>
+                <th class="text-end">Projected Round</th>
+                <th class="text-end">Projected Total</th>
+                <th>Tricks (0-13)</th>
+            </tr>
+        </thead>
+        <tbody>
+           @foreach (var player in session?.Players.Select((p, index) => new { Player = p, Index = index }) ?? Enumerable.Empty<dynamic>())
+    {
+        <tr>
+            <td>@player.Player.Name</td>
+            <td class="text-end">@player.Player.TotalScore</td>
+            <td>@(bids.ContainsKey(player.Player.Id) ? bids[player.Player.Id].ToString() : "-")</td>
+            <td class="text-end">@((ViewBag.ProjectedRound != null && ((Dictionary<int,double>)ViewBag.ProjectedRound).ContainsKey(player.Player.Id)) ? ((Dictionary<int,double>)ViewBag.ProjectedRound)[player.Player.Id].ToString("0.0") : "-")</td>
+            <td class="text-end">@((ViewBag.ProjectedTotals != null && ((Dictionary<int,double>)ViewBag.ProjectedTotals).ContainsKey(player.Player.Id)) ? ((Dictionary<int,double>)ViewBag.ProjectedTotals)[player.Player.Id].ToString("0.0") : "-")</td>
+            <td>
+                <input type="number" name="tricks[@player.Player.Id]" min="0" max="13" class="form-control d-inline w-auto" value="@(prefill.ContainsKey(player.Player.Id) ? prefill[player.Player.Id].ToString() : String.Empty)" required />
+            </td>
+        </tr>
+    }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Totals</th>
+                <th class="text-end">@((session?.Players.Sum(p => p.TotalScore)) ?? 0)</th>
+                <th></th>
+                <th class="text-end">@((ViewBag.ProjectedRound != null) ? ((Dictionary<int,double>)ViewBag.ProjectedRound).Values.Sum().ToString("0.0") : "-")</th>
+                <th class="text-end">@((ViewBag.ProjectedTotals != null) ? ((Dictionary<int,double>)ViewBag.ProjectedTotals).Values.Sum().ToString("0.0") : "-")</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+    <button type="submit" class="btn btn-primary">Save Tricks</button>
+    </form>
+</div>
