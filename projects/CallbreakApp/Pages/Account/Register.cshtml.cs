@@ -63,7 +63,7 @@ public class RegisterModel : PageModel
             {
                 _logger.LogInformation("User created a new account with password.");
 
-                await _userManager.AddToRoleAsync(user, "User");  // Optional role
+                await _userManager.AddToRoleAsync(user, "User");  
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return LocalRedirect(returnUrl);
@@ -74,7 +74,6 @@ public class RegisterModel : PageModel
             }
         }
 
-        // If we got this far, something failed, redisplay form
         return Page();
     }
 }

@@ -17,7 +17,6 @@
                 <th>Player</th>
                 <th class="text-end">Current Score</th>
                 <th>Bid</th>
-                <th class="text-end">Projected Round</th>
                 <th class="text-end">Projected Total</th>
                 <th>Tricks (0-13)</th>
             </tr>
@@ -27,12 +26,15 @@
     {
         <tr>
             <td>@player.Player.Name</td>
-            <td class="text-end">@player.Player.TotalScore</td>
+            <td class="text-end">@player.Player.TotalScore.ToString("0.0")</td>
             <td>@(bids.ContainsKey(player.Player.Id) ? bids[player.Player.Id].ToString() : "-")</td>
-            <td class="text-end">@((ViewBag.ProjectedRound != null && ((Dictionary<int,double>)ViewBag.ProjectedRound).ContainsKey(player.Player.Id)) ? ((Dictionary<int,double>)ViewBag.ProjectedRound)[player.Player.Id].ToString("0.0") : "-")</td>
-            <td class="text-end">@((ViewBag.ProjectedTotals != null && ((Dictionary<int,double>)ViewBag.ProjectedTotals).ContainsKey(player.Player.Id)) ? ((Dictionary<int,double>)ViewBag.ProjectedTotals)[player.Player.Id].ToString("0.0") : "-")</td>
+            @{ 
+                var ptDict = ViewBag.ProjectedTotals as Dictionary<int,double> ?? new Dictionary<int,double>();
+            }
+            <td class="text-end">@(ptDict.TryGetValue(player.Player.Id, out double pt) ? (pt >= 0 ? "+" + pt.ToString("0.0") : pt.ToString("0.0")) : "-")</td>
             <td>
-                <input type="number" name="tricks[@player.Player.Id]" min="0" max="13" class="form-control d-inline w-auto" value="@(prefill.ContainsKey(player.Player.Id) ? prefill[player.Player.Id].ToString() : String.Empty)" required />
+                @{ var defaultTrick = prefill.ContainsKey(player.Player.Id) ? prefill[player.Player.Id] : (bids.ContainsKey(player.Player.Id) ? bids[player.Player.Id] : 0); }
+                <input type="number" name="tricks[@player.Player.Id]" min="0" max="13" class="form-control d-inline w-auto" value="@defaultTrick" required />
             </td>
         </tr>
     }
@@ -42,8 +44,7 @@
                 <th>Totals</th>
                 <th class="text-end">@((session?.Players.Sum(p => p.TotalScore)) ?? 0)</th>
                 <th></th>
-                <th class="text-end">@((ViewBag.ProjectedRound != null) ? ((Dictionary<int,double>)ViewBag.ProjectedRound).Values.Sum().ToString("0.0") : "-")</th>
-                <th class="text-end">@((ViewBag.ProjectedTotals != null) ? ((Dictionary<int,double>)ViewBag.ProjectedTotals).Values.Sum().ToString("0.0") : "-")</th>
+                <th></th>
                 <th></th>
             </tr>
         </tfoot>

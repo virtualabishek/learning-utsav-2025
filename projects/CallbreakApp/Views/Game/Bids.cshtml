@@ -15,7 +15,6 @@
                     <th>Player</th>
                     <th class="text-end">Current Score</th>
                         <th>Bid (0-13)</th>
-                        <th class="text-end">Projected Round</th>
                         <th class="text-end">Projected Total</th>
                 </tr>
             </thead>
@@ -28,8 +27,11 @@
                         <td>
                             <input type="number" name="bids[@player.Id]" min="0" max="13" class="form-control d-inline w-auto" value="@(prefill.ContainsKey(player.Id) ? prefill[player.Id].ToString() : String.Empty)" required />
                         </td>
-                            <td class="text-end">@((ViewBag.ProjectedRound != null && ((Dictionary<int,double>)ViewBag.ProjectedRound).ContainsKey(player.Id)) ? ((Dictionary<int,double>)ViewBag.ProjectedRound)[player.Id].ToString("0.0") : "-")</td>
-                            <td class="text-end">@((ViewBag.ProjectedTotals != null && ((Dictionary<int,double>)ViewBag.ProjectedTotals).ContainsKey(player.Id)) ? ((Dictionary<int,double>)ViewBag.ProjectedTotals)[player.Id].ToString("0.0") : "-")</td>
+                            @{ 
+                                var prDict = ViewBag.ProjectedRound as Dictionary<int,double> ?? new Dictionary<int,double>();
+                                var ptDict = ViewBag.ProjectedTotals as Dictionary<int,double> ?? new Dictionary<int,double>();
+                            }
+                            <td class="text-end">@(ptDict.TryGetValue(player.Id, out double pt) ? pt.ToString("0.0") : "-")</td>
                     </tr>
                 }
             </tbody>
@@ -38,8 +40,6 @@
                     <th>Totals</th>
                         <th class="text-end">@((session?.Players.Sum(p => p.TotalScore)) ?? 0)</th>
                         <th></th>
-                        <th class="text-end">@((ViewBag.ProjectedRound != null) ? ((Dictionary<int,double>)ViewBag.ProjectedRound).Values.Sum().ToString("0.0") : "-")</th>
-                        <th class="text-end">@((ViewBag.ProjectedTotals != null) ? ((Dictionary<int,double>)ViewBag.ProjectedTotals).Values.Sum().ToString("0.0") : "-")</th>
                 </tr>
             </tfoot>
         </table>

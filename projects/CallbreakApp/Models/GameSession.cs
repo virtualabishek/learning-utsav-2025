@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace CallbreakApp.Models;
 
-public partial class GameSession
+public partial class GameSession 
 {
     public int Id { get; set; }
     [Required]

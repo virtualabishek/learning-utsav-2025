@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallbreakApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251022170254_AddRoundScores")]
-    partial class AddRoundScores
+    [Migration("20251025160615_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

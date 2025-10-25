@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Identity;
-using CallbreakApp.Data;
+using CallbreakApp.Data; // just imports db context
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args); // builds app hosts
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -13,11 +13,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-builder.Services.AddSession();
+builder.Services.AddControllersWithViews(); // for mvc
+builder.Services.AddRazorPages(); // for auth pages
+builder.Services.AddSession(); // for game state
 
-var app = builder.Build();
+var app = builder.Build(); // apps build
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -32,12 +32,12 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
-app.UseAuthentication();
+app.UseAuthentication(); // for middleware
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
-app.MapControllerRoute(
+app.MapControllerRoute( // to make the routes
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();

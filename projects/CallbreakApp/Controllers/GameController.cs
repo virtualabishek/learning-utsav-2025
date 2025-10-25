@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace CallbreakApp.Controllers;
 
-[Authorize]
+[Authorize] // all actions require authentication
 public class GameController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -19,7 +19,7 @@ public class GameController : Controller
         _context = context;
     }
 
-    private static double ComputeRoundScore(int bid, int tricks)
+    private static double ComputeRoundScore(int bid, int tricks) // for reuse like tricks after updating the bids
     {
         if (bid < 0) bid = 0;
         if (tricks < 0) tricks = 0;
@@ -28,14 +28,14 @@ public class GameController : Controller
         return -(bid - tricks);
     }
 
-    public IActionResult Create()
+    public IActionResult Create() // GET: Empty form to create new game
     {
-        return View(new List<string>());
+        return View(new List<string>()); // model for view
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(List<string> playerNames)
+    [ValidateAntiForgeryToken] //csrf
+    public async Task<IActionResult> Create(List<string> playerNames) // post : bind form
     {
         if (!ModelState.IsValid || playerNames.Count != 4)
         {
@@ -57,7 +57,7 @@ public class GameController : Controller
         return RedirectToAction("Bids", new { round = 1 });
     }
 
-    public async Task<IActionResult> Bids(int round)
+    public async Task<IActionResult> Bids(int round) // GET: from with prefill projection
     {
         var sessionId = HttpContext.Session.GetInt32("CurrentSessionId");
         if (sessionId == null) return RedirectToAction("Create");
@@ -78,13 +78,12 @@ public class GameController : Controller
                 prefill[rs.PlayerSessionId] = rs.Bid;
             }
         }
-        // compute projected round scores based on bids (tricks unknown -> assume 0)
         var projectedRound = new Dictionary<int, double>();
         var projectedTotals = new Dictionary<int, double>();
         foreach (var p in session.Players)
         {
             var bid = prefill.GetValueOrDefault(p.Id, 0);
-            var proj = ComputeRoundScore(bid, 0);
+            var proj = ComputeRoundScore(bid, bid);
             projectedRound[p.Id] = proj;
             projectedTotals[p.Id] = p.TotalScore + proj;
         }
@@ -179,15 +178,29 @@ public class GameController : Controller
         ViewBag.Round = round;
         ViewBag.Bids = bids ?? new Dictionary<int, int>();
         Dictionary<int, int>? tricks = null;
+        bool tricksFromSession = false;
         if (roundEntity != null)
         {
             var scores = await _context.RoundScores.Where(rs => rs.RoundId == roundEntity.Id).ToListAsync();
             if (scores.Any())
             {
-                tricks = scores.ToDictionary(x => x.PlayerSessionId, x => x.Tricks);
+                // Only treat RoundScore.Tricks as entered if at least one player has a non-zero value
+                var anyNonZero = scores.Any(s => s.Tricks != 0);
+                var tricksKey = $"RoundTricks:{session.Id}:{round}";
+                var tjson = HttpContext.Session.GetString(tricksKey);
+                if (!string.IsNullOrEmpty(tjson))
+                {
+                    tricks = JsonSerializer.Deserialize<Dictionary<int, int>>(tjson);
+                    tricksFromSession = true;
+                }
+                else if (anyNonZero)
+                {
+                    tricks = scores.ToDictionary(x => x.PlayerSessionId, x => x.Tricks);
+                }
+                // if no non-zero tricks and no session value, leave tricks null so view will default to bids
             }
         }
-        if (tricks == null)
+        if (tricks == null && !tricksFromSession)
         {
             var tricksKey = $"RoundTricks:{session.Id}:{round}";
             var tjson = HttpContext.Session.GetString(tricksKey);
@@ -211,7 +224,7 @@ public class GameController : Controller
         }
         ViewBag.ProjectedRound = projectedRound2;
         ViewBag.ProjectedTotals = projectedTotals2;
-        return View(new Dictionary<int, int>());
+        return View(tricks ?? new Dictionary<int, int>());
     }
 
     [HttpPost]
