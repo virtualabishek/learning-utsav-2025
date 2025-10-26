@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CallbreakApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251025160615_InitialCreate")]
+    [Migration("20251026144335_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
